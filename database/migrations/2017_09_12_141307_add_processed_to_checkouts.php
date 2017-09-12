@@ -25,7 +25,7 @@ class AddProcessedToCheckouts extends Migration
      */
     public function down()
     {
-        Schema::table('users', function($table) {
+        Schema::table('checkouts', function($table) {
             $table->dropColumn('processed');
         });
     }
