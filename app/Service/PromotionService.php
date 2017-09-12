@@ -26,4 +26,23 @@ class PromotionService implements PromotionCreatorInterface
 
         if (!$promotion->save()) throw new PromotionCreationException();
     }
+
+    public function getPromotionByProduct($product)
+    {
+
+    }
+
+    public function hasPromotion($product, $quantity)
+    {
+        $price = \App\Promotion::where([
+            ['product_code', '=', $product],
+            ['minimum_qty', '<=', $quantity]
+        ])->pluck('promotion_price');
+
+        if (count($price->toArray()) == 0) {
+            return false;
+        } else {
+            return $price->toArray()[0];
+        }
+    }
 }

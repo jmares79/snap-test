@@ -14,5 +14,6 @@ use Illuminate\Http\Request;
 */
 
 Route::post('/snap/promotion/create', 'PromotionController@create')->name('create-promotion');
-Route::post('/snap/checkout/scan/{itemId}', 'CheckoutController@scanItem')->name('scan-item');
+Route::post('/snap/checkout/scan', 'CheckoutController@scanItem')->name('scan-item');
+Route::post('/snap/product/create', 'ProductController@create')->name('create-product');
 Route::get('/snap/total', 'CheckoutController@getTotal')->name('get-total');

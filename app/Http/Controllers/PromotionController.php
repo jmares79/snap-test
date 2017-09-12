@@ -5,15 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Requests\CreatePromotionPost;
+use App\Exceptions\PromotionCreationException;
 use App\Service\PromotionService;
 
 class PromotionController extends Controller
 {
     protected $promotion;
 
-    public function __construct(
-        PromotionService $promotion
-    )
+    public function __construct(PromotionService $promotion)
     {
         $this->promotion = $promotion;
     }
