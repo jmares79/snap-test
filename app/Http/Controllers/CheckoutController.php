@@ -24,6 +24,7 @@ class CheckoutController extends Controller
 
         try {
             $this->checkout->scan($payload->product_code);
+            $this->checkout->cleanTransactions();
 
             return response()->json(['message' => "Product scanned sucessfully"], Response::HTTP_CREATED);
         } catch (CheckoutScanningException $e) {

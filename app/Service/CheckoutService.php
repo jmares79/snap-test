@@ -42,9 +42,21 @@ class CheckoutService implements CheckoutInterface
      */
     public function total()
     {
-        $transactions = $this->processTransactions(\App\Checkout::all());
+        $checkouts = \App\Checkout::all();
+        $transactions = $this->processTransactions($checkouts);
+        $total = $this->calculateTotalPrice($transactions);
 
-        return $this->calculateTotalPrice($transactions);
+        $this->markTransactionsAsProcessed($checkouts);
+
+        return $total;
+    }
+
+    public function markTransactionsAsProcessed($checkouts)
+    {
+        foreach ($checkouts as $checkout) {
+            $checkout->processed = true;
+            $checkout->save();
+        }
     }
 
     protected function processTransactions(Collection $transactions)
@@ -66,7 +78,6 @@ class CheckoutService implements CheckoutInterface
 
         foreach ($transactions as $product => $quantity) {
             $price = $this->product->getPrice($product, $quantity);
-            // echo "Price for $product with $quantity amount is $price<br>";
             $total += $price * $quantity;
         }
 
