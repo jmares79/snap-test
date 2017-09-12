@@ -24,7 +24,6 @@ class CheckoutController extends Controller
 
         try {
             $this->checkout->scan($payload->product_code);
-            $this->checkout->cleanTransactions();
 
             return response()->json(['message' => "Product scanned sucessfully"], Response::HTTP_CREATED);
         } catch (CheckoutScanningException $e) {
@@ -36,6 +35,12 @@ class CheckoutController extends Controller
 
     public function getTotal(Request $request)
     {
-        dd($this->checkout->total());
+        try {
+            $total = $this->checkout->total();
+
+            return response()->json(['total' => $total], Response::HTTP_OK);
+        } catch (Exception $e) {
+            return response()->json(['message' => "Error while scanning product"], Response::HTTP_BAD_REQUEST);
+        }
     }
 }
