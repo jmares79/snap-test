@@ -8,6 +8,11 @@ use App\Exceptions\CheckoutScanningException;
 use App\Service\ProductService;
 use App\Checkout;
 
+/**
+ * @resource Checkout
+ *
+ * Checkout service to handle all needed operations for checkouts
+ */
 class CheckoutService implements CheckoutInterface
 {
     protected $product;

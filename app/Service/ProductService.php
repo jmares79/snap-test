@@ -6,6 +6,11 @@ use App\Exceptions\ProductCreationException;
 use App\Service\PromotionService;
 use App\Product;
 
+/**
+ * @resource Product
+ *
+ * Checkout service to handle all needed operations for products
+ */
 class ProductService
 {
    protected $promotion;

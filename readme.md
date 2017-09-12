@@ -1,53 +1,87 @@
-<p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
+# Snap code challenge
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+## Objective (As explained in the test)
 
-## About Laravel
+To create a Laravel project to simulate an items process line that creates products, promotions and calculates total prices based, if applies, in promotions loaded temporarily.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as:
+It consists of a REST JSON API to handle the creation and loading of products & promotions, and also a calculation of prices according to those promotions, if any.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Structure of the project
 
-Laravel is accessible, yet powerful, providing tools needed for large, robust applications. A superb combination of simplicity, elegance, and innovation give you tools you need to build any application with which you are tasked.
+Snap REST API is based on the [Laravel framework](https://laravel.com/), using several models to map back end tables.
 
-## Learning Laravel
+The reason for using Laravel is that is an up-to-date modern MVC framework, that has all needed capabilites for building, maintaining documenting and testing any project in a painless way.
 
-Laravel has the most extensive and thorough documentation and video tutorial library of any modern web application framework. The [Laravel documentation](https://laravel.com/docs) is thorough, complete, and makes it a breeze to get started learning the framework.
+It also has Symfony components, which takes the best parts of another great framework, and last but not least, it has an amazing documentation, both [written](https://laravel.com/) or in [video lessons](https://laracasts.com/)
 
-If you're not in the mood to read, [Laracasts](https://laracasts.com) contains over 900 video tutorials on a range of topics including Laravel, modern PHP, unit testing, JavaScript, and more. Boost the skill level of yourself and your entire team by digging into our comprehensive video library.
+### Data models
 
-## Laravel Sponsors
+The project is structured with the following resources, as follows:
 
-We would like to extend our thanks to the following sponsors for helping fund on-going Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](http://patreon.com/taylorotwell):
+* Product resource
+* Promotion resource
+* Checkout resource
 
-- **[Vehikl](http://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[British Software Development](https://www.britishsoftware.co)**
-- **[Styde](https://styde.net)**
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
-- [User10](https://user10.com)
-- [Soumettre.fr](https://soumettre.fr/)
+* Several Models created for managing DDBB data
+* A set of interfaces, in order to complain with most of [SOLID principles](https://en.wikipedia.org/wiki/SOLID_(object-oriented_design)
 
-## Contributing
+In a nutshell, __Products__  are a master table, that contains (in a proper production enviromnet) all the core data for the business to run. It usually get updates only, as the product base is supposedly to grow.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](http://laravel.com/docs/contributions).
+__Promotions__ is the table that holds the (usually) temporarily promotions for a certain product. It holds the product, the minimum amount of items to be considered as a promotion, and creation timestamps.
 
-## Security Vulnerabilities
+__Checkouts__ in the other hand, is a dinamic table containing the scanned items for some atomic shopping action. It holds the products that eventually will get calculated when requested the `tota` endpoint of the API.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
+When requested, the system will fetch all the unprocessed item rows in that table, will check if any promotion applies, and will get the total price to be returned.
 
-## License
+### Controllers
 
-The Laravel framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
+The requests are handled by `App\Http\Controllers\*` that provides a set of actions to be called on every request.
+
+As in every Laravel project, each action is mapped to a route in `routes\api.php`. The routes and mappings are self explanatory, but I'll explain them:
+
+* HTTP GET `api/snap/total` - Returns total price for all scanned items
+* HTTP POST `api/snap/product/create` - Creates a new product
+* HTTP POST `api/snap/promotion/create` - Creates a new promotion
+* HTTP POST `api/snap/checkout/scan` - Scans a new item and loads into Checkout table
+
+### Interfaces
+
+In order to allow the codebase to be extended or modified accordingly, 2 interfaces were created:
+
+* PromotionCreatorInterface: create()
+* CheckoutInterface: scan($productCode)
+
+```
+In a more thorough project, a __CalculatorInterface__ would be useful to have, so the concrete calculation algorithm could be isolated in its own class/service, in order to implement a Strategy pattern, for changing the way total get calculated dinamically. This was left out of scope
+```
+
+While implementing those interfaces, new services could be created to implement a better/efficient way of scan items & creating products. Following SOLID principles as explained before.
+
+## Installation
+
+Just clone this repo to any desired folder (either a XAMPP htdocs, Docker PHP container or anything that suits you) and execute `composer install` in the command line.
+
+Start your web server & MySQL server (for developing purposes I use the built in that PHP has) typing `php artisan serve` in the project folder command line and using any MySQL server you prefer; then create both a `snap` & `snap_test` database for migrations to run properly.
+
+After that, run `php artisan migrate` to run migrations and create the schema.
+
+```
+If any of those DDBBs seems incorrect, just change the names in the .env file located at the root of the structure. Also, there are some dummy seeds created for testing purposes.
+```
+I developed and QA test it using [Postman](https://www.getpostman.com/postman)
+
+## Tests
+
+In order to accomplish proper refactoring of the code, several integration test were provided.
+
+For a matter of timing, not class-to-class unit tests were developed, but it's importan to point out that a high rate of code coverage is paramount when developing a medium to big size software.
+
+The provide test are in `test\Feature` folder, using the API that Laravel provides (Is a combination of PHPUNIT functions and some core JSON handling methods).
+
+The tests make some HTTP requests to all and every single endpoint of the project, and checks whether the HTTP status returned is the corresponding to the type of payload/request, and also checks that the response structure is correct.
+
+For more details check the tests, are pretty self explanatory.
+
+The execution of the tests are in the form `vendor/phpunit/phpunit/phpunit` for executing all tests, of using the `vendor/phpunit/phpunit/phpunit --filter <pattern>` for a single test.
+
+Please check the [PHPUnit documentation](https://phpunit.de/manual/5.7/en/index.html) for more details.

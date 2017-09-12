@@ -8,6 +8,11 @@ use App\Http\Requests\CreateProductPost;
 use App\Exceptions\ProductCreationException;
 use App\Service\ProductService;
 
+/**
+ * @resource Product
+ *
+ * Checkout controller to handle all needed operations for products
+ */
 class ProductController extends Controller
 {
     protected $product;

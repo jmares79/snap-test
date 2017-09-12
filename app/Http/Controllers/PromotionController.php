@@ -8,6 +8,11 @@ use App\Http\Requests\CreatePromotionPost;
 use App\Exceptions\PromotionCreationException;
 use App\Service\PromotionService;
 
+/**
+ * @resource Promotion
+ *
+ * Promotion controller to handle all needed operations for promotions
+ */
 class PromotionController extends Controller
 {
     protected $promotion;

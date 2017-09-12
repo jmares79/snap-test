@@ -6,6 +6,11 @@ use App\Interfaces\PromotionCreatorInterface;
 use App\Exceptions\PromotionCreationException;
 use App\Promotion;
 
+/**
+ * @resource Promotion
+ *
+ * Promotion service to handle all needed operations for promotions
+ */
 class PromotionService implements PromotionCreatorInterface
 {
    /**

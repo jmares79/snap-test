@@ -9,6 +9,11 @@ use App\Exceptions\CheckoutScanningException;
 use App\Http\Requests\ScanItemPost;
 use App\Service\CheckoutService;
 
+/**
+ * @resource Checkout
+ *
+ * Checkout controller to handle all needed operations for loading scanned items
+ */
 class CheckoutController extends Controller
 {
     protected $checkout;
