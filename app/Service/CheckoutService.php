@@ -37,12 +37,12 @@ class CheckoutService implements CheckoutInterface
     /**
      * Calculates the total price
      *
-     * @return void
-     * @throws CheckoutScanningException On scanning error
+     * @return float $total
      */
     public function total()
     {
-        $checkouts = \App\Checkout::all();
+        $checkouts = \App\Checkout::where('processed', false);
+
         $transactions = $this->processTransactions($checkouts);
         $total = $this->calculateTotalPrice($transactions);
 
@@ -51,7 +51,14 @@ class CheckoutService implements CheckoutInterface
         return $total;
     }
 
-    public function markTransactionsAsProcessed($checkouts)
+    /**
+     * Mark the transactions as completed
+     *
+     * @param Collection $checkouts The checkouts to be marked as processed
+     *
+     * @return void
+     */
+    protected function markTransactionsAsProcessed(Collection $checkouts)
     {
         foreach ($checkouts as $checkout) {
             $checkout->processed = true;
@@ -59,6 +66,13 @@ class CheckoutService implements CheckoutInterface
         }
     }
 
+    /**
+     * Process the transactions, grouping them in an easily processable array
+     *
+     * @param Collection $transactions The transactions to be grouped
+     *
+     * @return mixed $grouped
+     */
     protected function processTransactions(Collection $transactions)
     {
         $grouped = [];
@@ -71,7 +85,14 @@ class CheckoutService implements CheckoutInterface
         return $grouped;
     }
 
-    protected function calculateTotalPrice($transactions)
+    /**
+     * Perform the calculation of the total price
+     *
+     * @param Collection $transactions The transactions to be processed for calculating the total
+     *
+     * @return float $total
+     */
+    protected function calculateTotalPrice(Collection $transactions)
     {
         $total = 0.0;
         $price = 0.0;
