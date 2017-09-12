@@ -41,7 +41,7 @@ class CheckoutService implements CheckoutInterface
      */
     public function total()
     {
-        $checkouts = \App\Checkout::where('processed', false);
+        $checkouts = \App\Checkout::where('processed', false)->get();
 
         $transactions = $this->processTransactions($checkouts);
         $total = $this->calculateTotalPrice($transactions);
@@ -88,11 +88,11 @@ class CheckoutService implements CheckoutInterface
     /**
      * Perform the calculation of the total price
      *
-     * @param Collection $transactions The transactions to be processed for calculating the total
+     * @param mixed $transactions The transactions array to be processed for calculating the total
      *
      * @return float $total
      */
-    protected function calculateTotalPrice(Collection $transactions)
+    protected function calculateTotalPrice($transactions)
     {
         $total = 0.0;
         $price = 0.0;
